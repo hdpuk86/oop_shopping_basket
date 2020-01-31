@@ -1,4 +1,4 @@
-class Promo
+class BasketPromo
   attr_accessor :target_amount, :discount
 
   def initialize(target_amount, discount)

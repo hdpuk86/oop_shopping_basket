@@ -1,16 +1,19 @@
 require 'minitest/autorun'
+require 'byebug'
 
 require_relative 'basket'
 require_relative 'checkout'
 require_relative 'item'
-require_relative 'promo'
+require_relative 'rule_types/basket_promo'
+require_relative 'rule_types/multibuy_promo'
 
 class ShoppingBasketTests < MiniTest::Test
   def setup
-    basket_promo = Promo.new(100, 20)
+    @item_a = Item.new(2)
+    basket_promo = BasketPromo.new(100, 20)
+    multibuy = MultibuyPromo.new(@item_a, 100, 20)
     @rules = [basket_promo]
     @co = Checkout.new(@rules)
-    @item_a = Item.new(2)
   end
 
   def test_can_create_checkout
@@ -59,5 +62,17 @@ class ShoppingBasketTests < MiniTest::Test
     item = Item.new(99)
     @co.scan(item)
     assert_equal 99, @co.total
+  end
+
+  def test_multibuy_promo_can_be_applied_if_target_is_met
+    item_a = Item.new(2)
+    multibuy = MultibuyPromo.new(item_a, 3, 5)
+    rules = [multibuy]
+    co = Checkout.new(rules)
+    co.scan(item_a)
+    co.scan(item_a)
+    co.scan(item_a)
+
+    assert_equal multibuy.promo_price, co.total
   end
 end
