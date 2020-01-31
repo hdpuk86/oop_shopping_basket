@@ -43,10 +43,16 @@ class ShoppingBasketTests < MiniTest::Test
     assert_equal @item_a.price, @co.total
   end
 
-  def test_basket_discount_can_get_applied
+  def test_basket_discount_can_be_applied_if_target_is_met
     item = Item.new(100)
     @co.scan(item)
     assert_equal 80, @co.total
+  end
+
+  def test_basket_discount_can_be_applied_if_target_is_exceeded
+    item = Item.new(200)
+    @co.scan(item)
+    assert_equal 180, @co.total
   end
 
   def test_basket_discount_does_not_get_applied_if_target_not_met
