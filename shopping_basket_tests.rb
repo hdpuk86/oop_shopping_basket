@@ -26,20 +26,24 @@ class ShoppingBasketTests < MiniTest::Test
     item = 'item'
     assert @co.scan(item)
   end
+
+  def test_checkout_total_increases_when_item_scanned
+    item = 'item'
+    @co.scan(item)
+    assert_equal 1, @co.total
+  end
 end
 
 class Checkout
-  attr_accessor :rules
+  attr_accessor :rules, :total
 
   def initialize(rules=[])
     @rules = rules
-  end
-
-  def total
-    0
+    @total = 0
   end
 
   def scan(item)
+    self.total += 1
     true
   end
 end
