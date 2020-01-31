@@ -4,6 +4,7 @@ class ShoppingBasketTests < MiniTest::Test
   def setup
     @rules = []
     @co = Checkout.new(@rules)
+    @item_a = Item.new(2)
   end
 
   def test_can_create_checkout
@@ -23,14 +24,25 @@ class ShoppingBasketTests < MiniTest::Test
   end
 
   def test_checkout_can_scan_items
-    item = 'item'
-    assert @co.scan(item)
+    assert @co.scan(@item_a)
   end
 
   def test_checkout_total_increases_when_item_scanned
-    item = 'item'
-    @co.scan(item)
-    assert_equal 1, @co.total
+    @co.scan(@item_a)
+    assert_equal 2, @co.total
+  end
+
+  def test_checkout_total_increases_by_item_price_when_scanned
+    @co.scan(@item_a)
+    assert_equal @item_a.price, @co.total
+  end
+end
+
+class Item
+  attr_accessor :price
+
+  def initialize(price)
+    @price = price
   end
 end
 
@@ -43,7 +55,6 @@ class Checkout
   end
 
   def scan(item)
-    self.total += 1
-    true
+    self.total += item.price
   end
 end
