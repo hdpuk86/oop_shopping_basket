@@ -11,7 +11,7 @@ class Checkout
   end
 
   def scan(item)
-    self.basket.total += item.price
+    self.basket.add_item(item)
   end
 
   def discounts

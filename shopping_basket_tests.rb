@@ -75,4 +75,17 @@ class ShoppingBasketTests < MiniTest::Test
 
     assert_equal multibuy.promo_price, co.total
   end
+
+  def test_multibuy_promo_can_be_applied_correctly_if_target_is_exceeded
+    item_a = Item.new(2)
+    multibuy = MultibuyPromo.new(item_a, 3, 5)
+    rules = [multibuy]
+    co = Checkout.new(rules)
+    co.scan(item_a) # 2
+    co.scan(item_a) # 4
+    co.scan(item_a) # 5
+    co.scan(item_a) # 7
+
+    assert_equal 7, co.total
+  end
 end
