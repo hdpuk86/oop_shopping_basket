@@ -1,9 +1,9 @@
 class MultibuyPromo
-  attr_accessor :promo_price, :promo_item, :target_number_of_items
+  attr_accessor :promo_price, :promo_item, :number_of_items_needed
 
-  def initialize(promo_item, target_number_of_items, promo_price)
+  def initialize(promo_item, number_of_items_needed, promo_price)
     @promo_item = promo_item
-    @target_number_of_items = target_number_of_items
+    @number_of_items_needed = number_of_items_needed
     @promo_price = promo_price
   end
 
@@ -14,34 +14,13 @@ class MultibuyPromo
   private
 
   def total_after_discount(basket)
-    total_cost_of_valid_promo_items(basket) + total_cost_of_exess_promo_items(basket)
-  end
+    all_promo_items = basket.items.filter { |basket_item| basket_item == self.promo_item }
+    excess_promo_items = all_promo_items.length % self.number_of_items_needed
+    number_of_valid_promo_items = all_promo_items.length - excess_promo_items
+    number_of_times_to_apply_promo = number_of_valid_promo_items / self.number_of_items_needed
+    total_cost_of_valid_promo_items = self.promo_price * number_of_times_to_apply_promo
+    total_cost_of_exess_promo_items = excess_promo_items * self.promo_item.price
 
-  def total_cost_of_valid_promo_items(basket)
-    self.promo_price * times_promotion_should_be_applied(basket)
-  end
-
-  def times_promotion_should_be_applied(basket)
-    number_of_valid_promo_items(basket) / self.target_number_of_items
-  end
-
-  def number_of_valid_promo_items(basket)
-    total_number_of_promo_items(basket) - excess_promo_items(basket)
-  end
-
-  def all_promo_items(basket)
-    basket.items.filter { |basket_item| basket_item == self.promo_item }
-  end
-
-  def total_number_of_promo_items(basket)
-    all_promo_items(basket).length
-  end
-
-  def excess_promo_items(basket)
-    total_number_of_promo_items(basket) % self.target_number_of_items
-  end
-
-  def total_cost_of_exess_promo_items(basket)
-    excess_promo_items(basket) * self.promo_item.price
+    total_cost_of_valid_promo_items + total_cost_of_exess_promo_items
   end
 end
