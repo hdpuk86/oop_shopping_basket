@@ -21,6 +21,11 @@ class ShoppingBasketTests < MiniTest::Test
   def test_checkout_total_starts_at_zero
     assert_equal 0, @co.total
   end
+
+  def test_checkout_can_scan_items
+    item = 'item'
+    assert @co.scan(item)
+  end
 end
 
 class Checkout
@@ -32,5 +37,9 @@ class Checkout
 
   def total
     0
+  end
+
+  def scan(item)
+    true
   end
 end
