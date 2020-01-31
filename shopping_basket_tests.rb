@@ -1,5 +1,10 @@
 require 'minitest/autorun'
 
+require_relative 'basket'
+require_relative 'checkout'
+require_relative 'item'
+require_relative 'promo'
+
 class ShoppingBasketTests < MiniTest::Test
   def setup
     basket_promo = Promo.new(100, 20)
@@ -48,56 +53,5 @@ class ShoppingBasketTests < MiniTest::Test
     item = Item.new(99)
     @co.scan(item)
     assert_equal 99, @co.total
-  end
-end
-
-class Promo
-  attr_accessor :target_amount, :discount
-
-  def initialize(target_amount, discount)
-    @target_amount = target_amount
-    @discount = discount
-  end
-
-  def calculate_discount(basket)
-    return self.discount if basket.total >= self.target_amount
-  end
-end
-
-class Item
-  attr_accessor :price
-
-  def initialize(price)
-    @price = price
-  end
-end
-
-class Basket
-  attr_accessor :total
-
-  def initialize
-    @total = 0
-  end
-end
-
-class Checkout
-  attr_accessor :rules, :basket
-
-  def initialize(rules=[])
-    @rules = rules
-    @basket = Basket.new
-  end
-
-  def total
-    self.basket.total - discounts
-  end
-
-  def scan(item)
-    self.basket.total += item.price
-  end
-
-  def discounts
-    all_promo_discounts = self.rules.map { |rule| rule.calculate_discount(self.basket) }
-    all_promo_discounts.compact.sum
   end
 end
