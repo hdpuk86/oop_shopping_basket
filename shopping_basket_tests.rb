@@ -17,6 +17,10 @@ class ShoppingBasketTests < MiniTest::Test
   def test_checkout_has_a_total
     assert @co.total
   end
+
+  def test_checkout_total_starts_at_zero
+    assert_equal 0, @co.total
+  end
 end
 
 class Checkout
@@ -27,6 +31,6 @@ class Checkout
   end
 
   def total
-    true
+    0
   end
 end
