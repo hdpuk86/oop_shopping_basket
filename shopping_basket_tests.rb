@@ -1,5 +1,4 @@
 require 'minitest/autorun'
-require 'byebug'
 
 require_relative 'basket'
 require_relative 'checkout'
@@ -12,7 +11,7 @@ class ShoppingBasketTests < MiniTest::Test
     @item_a = Item.new(2)
     basket_promo = BasketPromo.new(100, 20)
     multibuy = MultibuyPromo.new(@item_a, 100, 20)
-    @rules = [basket_promo]
+    @rules = [basket_promo, multibuy]
     @co = Checkout.new(@rules)
   end
 
