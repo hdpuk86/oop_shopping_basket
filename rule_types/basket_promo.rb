@@ -7,6 +7,14 @@ class BasketPromo
   end
 
   def calculate_discount(basket)
-    return self.discount if basket.total >= self.target_amount
+    return 0 unless requirements_met?(basket)
+
+    self.discount
+  end
+
+  private
+
+  def requirements_met?(basket)
+    basket.total >= self.target_amount
   end
 end
