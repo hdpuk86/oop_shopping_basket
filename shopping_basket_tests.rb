@@ -57,6 +57,13 @@ class ShoppingBasketTests < MiniTest::Test
     assert_equal @item_a.price, @co.total
   end
 
+  def test_checkout_total_is_accurate_without_rules
+    co = Checkout.new
+    co.scan(@item_a)
+
+    assert_equal @item_a.price, co.total
+  end
+
   def test_basket_discount_can_be_applied_if_target_is_met
     item = Item.new(100)
     rules = Rules.new
