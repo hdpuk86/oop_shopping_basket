@@ -25,6 +25,8 @@ class MultibuyPromo
     number_of_promo_items(items) >= self.number_of_items_needed
   end
 
+  private
+
   def total_after_discount(items)
     non_promo_items = items.filter { |item| item != self.promo_item }
     non_promo_items_cost = non_promo_items.sum { |item| item.price }
