@@ -13,11 +13,7 @@ class Rules
     @rules.delete(rule)
   end
 
-  def multibuy
-    self.rules.find_all { |rule| rule.multibuy? }
-  end
-
-  def basket
-    self.rules.find_all { |rule| rule.basket? }
+  def of_type(type)
+    self.rules.find_all { |rule| rule.type == type }
   end
 end

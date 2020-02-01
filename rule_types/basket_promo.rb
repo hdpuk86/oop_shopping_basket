@@ -12,15 +12,11 @@ class BasketPromo
     self.discount
   end
 
-  def multibuy?
-    false
-  end
-
-  def basket?
-    true
-  end
-
   def requirements_met?(current_total)
     current_total >= self.target_amount
+  end
+
+  def type
+    'basket'
   end
 end

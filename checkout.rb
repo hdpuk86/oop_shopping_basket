@@ -18,16 +18,16 @@ class Checkout
   end
 
   def discounts
-    multibuy_discounts = calculate_discounts(self.rules.multibuy, self.items, self.raw_total)
+    multibuy_discounts = calculate_discounts(self.rules.of_type('multibuy'), self.raw_total)
     new_total = self.raw_total - multibuy_discounts
 
-    basket_discounts = calculate_discounts(self.rules.basket, self.items, new_total)
+    basket_discounts = calculate_discounts(self.rules.of_type('basket'), new_total)
     multibuy_discounts + basket_discounts
   end
 
   private
 
-  def calculate_discounts(promos, items, current_total)
-    promos.map { |rule| rule.calculate_discount(items, current_total) }.compact.sum
+  def calculate_discounts(promos, current_total)
+    promos.map { |rule| rule.calculate_discount(self.items, current_total) }.compact.sum
   end
 end

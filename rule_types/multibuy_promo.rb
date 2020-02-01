@@ -13,16 +13,12 @@ class MultibuyPromo
     current_total - total_after_discount(items)
   end
 
-  def multibuy?
-    true
-  end
-
-  def basket?
-    false
-  end
-
   def requirements_met?(items)
     number_of_promo_items(items) >= self.number_of_items_needed
+  end
+
+  def type
+    'multibuy'
   end
 
   private
