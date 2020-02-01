@@ -1,10 +1,10 @@
 require 'minitest/autorun'
 
-require_relative 'basket'
 require_relative 'checkout'
 require_relative 'item'
 require_relative 'rule_types/basket_promo'
 require_relative 'rule_types/multibuy_promo'
+require_relative 'rules'
 
 class ShoppingBasketTests < MiniTest::Test
   def setup
@@ -13,10 +13,14 @@ class ShoppingBasketTests < MiniTest::Test
     @item_c = Item.new(50)
     @item_d = Item.new(15)
 
-    @multibuy_a = MultibuyPromo.new(@item_a, 3, 75)
-    @multibuy_b = MultibuyPromo.new(@item_b, 2, 35)
+    @multibuy_a = MultibuyPromo.new(@item_a, 3, 75) #save 15
+    @multibuy_b = MultibuyPromo.new(@item_b, 2, 35) #save 5
     @basket_promo = BasketPromo.new(150, 20)
-    @rules = [@multibuy_a, @multibuy_b, @basket_promo]
+
+    @rules = Rules.new
+    @rules.add(@multibuy_a)
+    @rules.add(@multibuy_b)
+    @rules.add(@basket_promo)
 
     @co = Checkout.new(@rules)
   end
@@ -55,7 +59,9 @@ class ShoppingBasketTests < MiniTest::Test
 
   def test_basket_discount_can_be_applied_if_target_is_met
     item = Item.new(100)
-    co = Checkout.new([BasketPromo.new(100, 20)])
+    rules = Rules.new
+    rules.add(BasketPromo.new(100, 20))
+    co = Checkout.new(rules)
 
     co.scan(item)
 
@@ -64,7 +70,9 @@ class ShoppingBasketTests < MiniTest::Test
 
   def test_basket_discount_can_be_applied_if_target_is_exceeded
     item = Item.new(200)
-    co = Checkout.new([BasketPromo.new(100, 20)])
+    rules = Rules.new
+    rules.add(BasketPromo.new(100, 20))
+    co = Checkout.new(rules)
 
     co.scan(item)
 
@@ -73,7 +81,9 @@ class ShoppingBasketTests < MiniTest::Test
 
   def test_basket_discount_does_not_get_applied_if_target_not_met
     item = Item.new(99)
-    co = Checkout.new([BasketPromo.new(100, 20)])
+    rules = Rules.new
+    rules.add(BasketPromo.new(100, 20))
+    co = Checkout.new(rules)
 
     co.scan(item)
 
@@ -82,39 +92,103 @@ class ShoppingBasketTests < MiniTest::Test
 
   def test_multibuy_promo_can_be_applied_if_target_is_met
     item_a = Item.new(10)
+    rules = Rules.new
     multibuy = MultibuyPromo.new(item_a, 3, 8)
-    co = Checkout.new([multibuy])
+    rules.add(multibuy)
+    co = Checkout.new(rules)
 
-    3.times do
-      co.scan(item_a)
-    end
+    3.times { co.scan(item_a) }
 
     assert_equal multibuy.promo_price, co.total
   end
 
   def test_multibuy_promo_can_be_applied_correctly_if_target_is_exceeded
     item_a = Item.new(10)
-    co = Checkout.new([MultibuyPromo.new(item_a, 3, 8)])
+    rules = Rules.new
+    rules.add(MultibuyPromo.new(item_a, 3, 8))
+    co = Checkout.new(rules)
 
-    4.times do
-      co.scan(item_a)
-    end
+    4.times { co.scan(item_a) }
 
     assert_equal 18, co.total
   end
 
   def test_checkout_can_apply_multiple_rules__multibuy_and_basket
     item_a = Item.new(10)
-    rules = [
-      MultibuyPromo.new(item_a, 2, 18),
-      BasketPromo.new(30, 5)
-    ]
+    rules = Rules.new
+    rules.add(MultibuyPromo.new(item_a, 2, 18))
+    rules.add(BasketPromo.new(30, 5))
     co = Checkout.new(rules)
 
-    4.times do
+    4.times { co.scan(item_a) }
+
+    assert_equal 31, co.total
+  end
+
+  def test_checkout_can_handle_multiple_items
+    3.times { @co.scan(@item_b) }
+    @co.scan(@item_c)
+
+    assert_equal 105, @co.total
+  end
+
+  def test_basket_promo_applied_after_other_promos
+    item_a = Item.new(10)
+    rules = Rules.new
+    rules.add(MultibuyPromo.new(item_a, 2, 18))
+    rules.add(BasketPromo.new(20, 5))
+    co = Checkout.new(rules)
+
+    2.times do
       co.scan(item_a)
     end
 
-    assert_equal 31, co.total
+    assert_equal 18, co.total
+  end
+
+  # # Test Example Data
+
+  # # A, B, C £100
+  def test_no_promos
+    @co.scan(@item_a)
+    @co.scan(@item_b)
+    @co.scan(@item_c)
+
+    assert_equal 100, @co.total
+  end
+
+  # # B, A, B, A, A £110
+  def test_two_multibuy_promos
+    @co.scan(@item_b)
+    @co.scan(@item_a)
+    @co.scan(@item_b)
+    @co.scan(@item_a)
+    @co.scan(@item_a)
+
+    assert_equal 110, @co.total
+  end
+
+  # # C, B, A, A, D, A, B £155
+  def test_two_multibuy_promos_and_basket_promo
+    @co.scan(@item_a)
+    @co.scan(@item_a)
+    @co.scan(@item_a)
+    @co.scan(@item_b)
+    @co.scan(@item_b)
+    @co.scan(@item_c)
+    @co.scan(@item_d)
+
+    assert_equal 155, @co.total
+  end
+
+  # # C, A, D, A, A £140
+  def test_basket_promo_not_applied_when_a_discount_reduces_total_below_target
+    @co.scan(@item_c)
+    @co.scan(@item_a)
+    @co.scan(@item_d)
+    @co.scan(@item_a)
+    @co.scan(@item_a)
+
+    assert_equal 140, @co.total
   end
 end

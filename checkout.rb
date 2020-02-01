@@ -1,21 +1,33 @@
 class Checkout
-  attr_accessor :rules, :basket
+  attr_accessor :rules, :raw_total
+  attr_reader :items
 
-  def initialize(rules=[])
+  def initialize(rules = Rules.new)
     @rules = rules
-    @basket = Basket.new
+    @items = []
+    @raw_total = 0
   end
 
   def total
-    self.basket.total - discounts
+    self.raw_total - discounts
   end
 
   def scan(item)
-    self.basket.add_item(item)
+    self.items.push(item)
+    self.raw_total += item.price
   end
 
   def discounts
-    all_promo_discounts = self.rules.map { |rule| rule.calculate_discount(self.basket) }
-    all_promo_discounts.compact.sum
+    multibuy_discounts = calculate_discounts(self.rules.multibuy, self.items, self.raw_total)
+    new_total = self.raw_total - multibuy_discounts
+
+    basket_discounts = calculate_discounts(self.rules.basket, self.items, new_total)
+    multibuy_discounts + basket_discounts
+  end
+
+  private
+
+  def calculate_discounts(promos, items, current_total)
+    promos.map { |rule| rule.calculate_discount(items, current_total) }.compact.sum
   end
 end

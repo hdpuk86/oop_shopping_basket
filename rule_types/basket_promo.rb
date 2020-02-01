@@ -6,15 +6,21 @@ class BasketPromo
     @discount = discount
   end
 
-  def calculate_discount(basket)
-    return 0 unless requirements_met?(basket)
+  def calculate_discount(_items, current_total)
+    return 0 unless requirements_met?(current_total)
 
     self.discount
   end
 
-  private
+  def multibuy?
+    false
+  end
 
-  def requirements_met?(basket)
-    basket.total >= self.target_amount
+  def basket?
+    true
+  end
+
+  def requirements_met?(current_total)
+    current_total >= self.target_amount
   end
 end
