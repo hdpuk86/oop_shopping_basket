@@ -1,7 +1,5 @@
-require 'byebug'
-
 class MultibuyPromo
-  attr_accessor :promo_price, :promo_item, :number_of_items_needed
+  attr_reader :promo_price, :promo_item, :number_of_items_needed
 
   def initialize(promo_item, number_of_items_needed, promo_price)
     @promo_item = promo_item

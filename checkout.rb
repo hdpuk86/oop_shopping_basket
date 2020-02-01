@@ -1,6 +1,6 @@
 class Checkout
-  attr_accessor :rules, :raw_total
-  attr_reader :items
+  attr_accessor :raw_total
+  attr_reader :items, :rules
 
   def initialize(rules = Rules.new)
     @rules = rules
