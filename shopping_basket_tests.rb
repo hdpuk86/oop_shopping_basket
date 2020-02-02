@@ -20,9 +20,9 @@ class ShoppingBasketTests < MiniTest::Test
 
     @co = Checkout.new
 
-    @co.rules.add(@multibuy_a)
-    @co.rules.add(@multibuy_b)
-    @co.rules.add(@basket_promo)
+    @co.add_rule(@multibuy_a)
+    @co.add_rule(@multibuy_b)
+    @co.add_rule(@basket_promo)
   end
 
   def test_can_create_checkout

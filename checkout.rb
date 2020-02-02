@@ -16,4 +16,8 @@ class Checkout
     self.items.push(item)
     self.raw_total += item.price
   end
+
+  def add_rule(rule)
+    self.rules.add(rule)
+  end
 end
