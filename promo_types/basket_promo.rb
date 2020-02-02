@@ -1,4 +1,5 @@
 class BasketPromo
+  TYPE = 'basket'.freeze
   attr_reader :target_amount, :discount
 
   def initialize(target_amount, discount)
@@ -17,6 +18,6 @@ class BasketPromo
   end
 
   def type
-    'basket'
+    TYPE
   end
 end

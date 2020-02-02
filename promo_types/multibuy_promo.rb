@@ -1,4 +1,5 @@
 class MultibuyPromo
+  TYPE = 'multibuy'.freeze
   attr_reader :promo_price, :promo_item, :number_of_items_needed
 
   def initialize(promo_item, number_of_items_needed, promo_price)
@@ -18,7 +19,7 @@ class MultibuyPromo
   end
 
   def type
-    'multibuy'
+    TYPE
   end
 
   private
