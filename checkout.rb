@@ -9,25 +9,11 @@ class Checkout
   end
 
   def total
-    self.raw_total - discounts
+    self.raw_total - PromoCalculator.discounts(self.rules, self.items, self.raw_total)
   end
 
   def scan(item)
     self.items.push(item)
     self.raw_total += item.price
-  end
-
-  def discounts
-    multibuy_discounts = calculate_discounts(self.rules.of_type('multibuy'), self.raw_total)
-    new_total = self.raw_total - multibuy_discounts
-
-    basket_discounts = calculate_discounts(self.rules.of_type('basket'), new_total)
-    multibuy_discounts + basket_discounts
-  end
-
-  private
-
-  def calculate_discounts(promos, current_total)
-    promos.map { |rule| rule.calculate_discount(self.items, current_total) }.compact.sum
   end
 end

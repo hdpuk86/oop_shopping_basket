@@ -1,19 +1,15 @@
 class Rules
-  attr_reader :rules
+  attr_reader :promotions
 
   def initialize
-    @rules = []
+    @promotions = []
   end
 
-  def add(rule)
-    @rules.push(rule)
-  end
-
-  def remove(rule)
-    @rules.delete(rule)
+  def add(promo)
+    @promotions.push(promo)
   end
 
   def of_type(type)
-    self.rules.find_all { |rule| rule.type == type }
+    self.promotions.find_all { |promo| promo.type == type }
   end
 end

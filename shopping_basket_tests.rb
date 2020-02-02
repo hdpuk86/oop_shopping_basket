@@ -1,9 +1,10 @@
 require 'minitest/autorun'
 
 require_relative 'checkout'
+require_relative 'promo_calculator'
 require_relative 'item'
-require_relative 'rule_types/basket_promo'
-require_relative 'rule_types/multibuy_promo'
+require_relative 'promo_types/basket_promo'
+require_relative 'promo_types/multibuy_promo'
 require_relative 'rules'
 
 class ShoppingBasketTests < MiniTest::Test
@@ -17,12 +18,11 @@ class ShoppingBasketTests < MiniTest::Test
     @multibuy_b = MultibuyPromo.new(@item_b, 2, 35) #save 5
     @basket_promo = BasketPromo.new(150, 20)
 
-    @rules = Rules.new
-    @rules.add(@multibuy_a)
-    @rules.add(@multibuy_b)
-    @rules.add(@basket_promo)
+    @co = Checkout.new
 
-    @co = Checkout.new(@rules)
+    @co.rules.add(@multibuy_a)
+    @co.rules.add(@multibuy_b)
+    @co.rules.add(@basket_promo)
   end
 
   def test_can_create_checkout
@@ -30,7 +30,9 @@ class ShoppingBasketTests < MiniTest::Test
   end
 
   def test_checkout_can_have_rules
-    assert_equal @rules, @co.rules
+    rules = Rules.new
+    co = Checkout.new(rules)
+    assert_equal rules, co.rules
   end
 
   def test_checkout_has_a_total
