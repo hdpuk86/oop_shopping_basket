@@ -1,3 +1,4 @@
+require 'byebug'
 class Checkout
   attr_accessor :raw_total
   attr_reader :items, :rules
@@ -9,7 +10,7 @@ class Checkout
   end
 
   def total
-    self.raw_total - PromoCalculator.discounts(self.rules, self.items, self.raw_total)
+    total_after_discounts
   end
 
   def scan(item)
@@ -19,5 +20,13 @@ class Checkout
 
   def add_rule(rule)
     self.rules.add(rule)
+  end
+
+  private
+
+  def total_after_discounts
+    self.rules.promotions.reduce(self.raw_total) do |current_total, rule|
+      current_total - rule.calculate_discount(self.items, current_total)
+    end
   end
 end
