@@ -1,4 +1,3 @@
-require 'byebug'
 class Checkout
   attr_accessor :raw_total
   attr_reader :items, :rules

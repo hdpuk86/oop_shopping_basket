@@ -1,7 +1,6 @@
 require 'minitest/autorun'
 
 require_relative 'checkout'
-require_relative 'promo_calculator'
 require_relative 'item'
 require_relative 'promo_types/basket_promo'
 require_relative 'promo_types/multibuy_promo'

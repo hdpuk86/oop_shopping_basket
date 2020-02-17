@@ -1,5 +1,4 @@
 class BasketPromo
-  TYPE = 'basket'.freeze
   attr_reader :target_amount, :discount
 
   def initialize(target_amount, discount)
@@ -15,9 +14,5 @@ class BasketPromo
 
   def requirements_met?(current_total)
     current_total >= self.target_amount
-  end
-
-  def type
-    TYPE
   end
 end
