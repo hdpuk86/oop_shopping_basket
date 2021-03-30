@@ -1,9 +1,11 @@
+require 'Ostruct'
+
 class Checkout
   attr_accessor :raw_total
-  attr_reader :items, :rules
+  attr_reader :items, :promotions
 
-  def initialize(rules = Rules.new)
-    @rules = rules
+  def initialize
+    @promotions = []
     @items = []
     @raw_total = 0
   end
@@ -12,20 +14,21 @@ class Checkout
     total_after_discounts
   end
 
-  def scan(item)
+  def scan_item(item)
     self.items.push(item)
     self.raw_total += item.price
   end
 
-  def add_rule(rule)
-    self.rules.add(rule)
+  def add_promo(promo)
+    self.promotions.push(promo)
   end
 
   private
 
   def total_after_discounts
-    self.rules.promotions.reduce(self.raw_total) do |current_total, rule|
-      current_total - rule.calculate_discount(self.items, current_total)
+    self.promotions.reduce(self.raw_total) do |current_total, promo|
+      basket = OpenStruct.new({ items: self.items, total: current_total })
+      current_total - promo.calculate_discount(basket)
     end
   end
 end

@@ -1,16 +1,16 @@
 class MultibuyPromo
   attr_reader :promo_price, :promo_item, :number_of_items_needed
 
-  def initialize(promo_item, number_of_items_needed, promo_price)
+  def initialize(promo_item:, number_of_items_needed:, promo_price:)
     @promo_item = promo_item
     @number_of_items_needed = number_of_items_needed
     @promo_price = promo_price
   end
 
-  def calculate_discount(items, _current_total)
-    return 0 unless requirements_met?(items)
+  def calculate_discount(basket)
+    return 0 unless requirements_met?(basket.items)
 
-    total_after_discount(items)
+    total_after_discount(basket.items)
   end
 
   def requirements_met?(items)

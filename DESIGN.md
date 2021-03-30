@@ -47,6 +47,6 @@ All promotions should follow the same interface in order for them to be treated 
 
 ### Checkout
 #### Responsibility:
-- Keeping track of scanned items and their total cost.
+- Keeping track of scan_itemned items and their total cost.
 
 ---
